@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1,
+                 maximum-scale=1, user-scalable=no,
+                 viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#080d12">
+
+    <title>Stickman — Episode 02</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <main id="video">
+
+        <section id="world">
+
+            <div id="sky"></div>
+
+            <div id="sun"></div>
+
+            <div class="cloud one"></div>
+            <div class="cloud two"></div>
+            <div class="cloud three"></div>
+
+            <div id="farHills">
+                <div class="farHill a"></div>
+                <div class="farHill b"></div>
+                <div class="farHill c"></div>
+            </div>
+
+            <div id="ground"></div>
+            <div class="grassLine"></div>
+            <div id="road"></div>
+
+            <div class="tree t1">
+                <div class="trunk"></div>
+                <div class="leaf a"></div>
+                <div class="leaf b"></div>
+                <div class="leaf c"></div>
+            </div>
+
+            <div class="tree t2">
+                <div class="trunk"></div>
+                <div class="leaf a"></div>
+                <div class="leaf b"></div>
+                <div class="leaf c"></div>
+            </div>
+
+            <div class="tree t3">
+                <div class="trunk"></div>
+                <div class="leaf a"></div>
+                <div class="leaf b"></div>
+                <div class="leaf c"></div>
+            </div>
+
+            <div class="house h1">
+                <div class="roof"></div>
+                <div class="body"></div>
+                <div class="window"></div>
+                <div class="window two"></div>
+            </div>
+
+            <div class="house h2">
+                <div class="roof"></div>
+                <div class="body"></div>
+                <div class="window"></div>
+                <div class="window two"></div>
+            </div>
+
+            <div id="pedestal">
+                <div id="pedestalBase"></div>
+                <div id="pedestalTop"></div>
+                <div id="button"></div>
+            </div>
+
+            <div id="question">?</div>
+
+            <div id="stickman">
+
+                <svg
+                    viewBox="0 0 116 152"
+                    aria-label="Stickman character"
+                >
+
+                    <g id="stickBody">
+
+                        <circle
+                            class="head"
+                            cx="58"
+                            cy="29"
+                            r="23"
+                        />
+
+                        <circle
+                            class="eye"
+                            cx="50"
+                            cy="27"
+                            r="3"
+                        />
+
+                        <circle
+                            class="eye"
+                            cx="66"
+                            cy="27"
+                            r="3"
+                        />
+
+                        <path
+                            class="mouth"
+                            d="M50 38 Q58 44 66 38"
+                        />
+
+                        <line
+                            class="bodyPart"
+                            x1="58"
+                            y1="53"
+                            x2="58"
+                            y2="92"
+                        />
+
+                        <line
+                            id="armL"
+                            class="bodyPart"
+                            x1="58"
+                            y1="61"
+                            x2="31"
+                            y2="81"
+                        />
+
+                        <line
+                            id="armR"
+                            class="bodyPart"
+                            x1="58"
+                            y1="61"
+                            x2="85"
+                            y2="81"
+                        />
+
+                        <circle
+                            id="handL"
+                            cx="31"
+                            cy="81"
+                            r="4"
+                        />
+
+                        <circle
+                            id="handR"
+                            cx="85"
+                            cy="81"
+                            r="4"
+                        />
+
+                        <line
+                            id="legL"
+                            class="bodyPart"
+                            x1="58"
+                            y1="92"
+                            x2="39"
+                            y2="123"
+                        />
+
+                        <line
+                            id="legR"
+                            class="bodyPart"
+                            x1="58"
+                            y1="92"
+                            x2="77"
+                            y2="123"
+                        />
+
+                        <ellipse
+                            class="shoe"
+                            cx="34"
+                            cy="126"
+                            rx="12"
+                            ry="5"
+                        />
+
+                        <ellipse
+                            class="shoe"
+                            cx="80"
+                            cy="126"
+                            rx="12"
+                            ry="5"
+                        />
+
+                    </g>
+
+                </svg>
+
+            </div>
+
+            <div id="episodeTitle">
+                EPISODE 02
+            </div>
+
+            <div id="caption"></div>
+
+            <div class="cinematicBar top"></div>
+            <div class="cinematicBar bottom"></div>
+
+            <div id="fade"></div>
+
+            <div id="endCard">
+
+                <h2>EPISODE 02</h2>
+
+                <p>The Button</p>
+
+                <button id="replay">
+                    ↻ WATCH AGAIN
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Audio belongs to the HTML layer.
+         Replace the sources with your own audio files later if desired. -->
+
+    <audio
+        id="backgroundMusic"
+        preload="auto"
+        loop
+        playsinline
+    ></audio>
+
+    <audio
+        id="clickAudio"
+        preload="auto"
+        playsinline
+    ></audio>
+
+    <audio
+        id="popAudio"
+        preload="auto"
+        playsinline
+    ></audio>
+
+    <audio
+        id="stepAudio"
+        preload="auto"
+        playsinline
+    ></audio>
+
+    <div id="startScreen">
+
+        <div class="startContent">
+
+            <div class="startLogo">
+                STICKMAN
+            </div>
+
+            <div class="startEpisode">
+                EPISODE 02
+            </div>
+
+            <div class="startSubtitle">
+                THE BUTTON
+            </div>
+
+            <button id="startButton">
+                ▶ START VIDEO
+            </button>
+
+            <div class="startHint">
+                Fullscreen · Landscape · YouTube Video
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="rotateHint">
+
+        <div class="rotatePhone"></div>
+
+        <strong>
+            Turn your phone sideways
+        </strong>
+
+        <span>
+            Landscape mode gives the video its proper 16:9 frame.
+        </span>
+
+    </div>
+
+</div>
+
+<script src="script.js" defer></script>
+
+</body>
+</html>
