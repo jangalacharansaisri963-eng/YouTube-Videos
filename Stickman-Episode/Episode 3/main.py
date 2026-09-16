@@ -1,87 +1,103 @@
 import os
 import shutil
 import subprocess
-
-import scene1
-import scene2
-import scene3
-import scene4
-import scene5
-import scene6
+import sys
 
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
 SCENES = [
-    (scene1, "scene1_frames", "scene1_audio.wav"),
-    (scene2, "scene2_frames", "scene2_audio.wav"),
-    (scene3, "scene3_frames", "scene3_audio.wav"),
-    (scene4, "scene4_frames", "scene4_audio.wav"),
-    (scene5, "scene5_frames", "scene5_audio.wav"),
-    (scene6, "scene6_frames", "scene6_audio.wav")
+    (1, "scene1.py", "scene1_frames", "scene1_audio.wav"),
+    (2, "scene2.py", "scene2_frames", "scene2_audio.wav"),
+    (3, "scene3.py", "scene3_frames", "scene3_audio.wav"),
+    (4, "scene4.py", "scene4_frames", "scene4_audio.wav"),
+    (5, "scene5.py", "scene5_frames", "scene5_audio.wav"),
+    (6, "scene6.py", "scene6_frames", "scene6_audio.wav"),
 ]
-
-OUTPUT = os.path.join(
-    ROOT,
-    "stickman_tree.mp4"
-)
 
 TEMP_DIR = os.path.join(
     ROOT,
     "_video_temp"
 )
 
+OUTPUT = os.path.join(
+    ROOT,
+    "stickman_tree.mp4"
+)
 
-def run_scene(module, number):
+
+def run_scene(number, script):
     print(f"Rendering Scene {number}...")
 
-    module.main()
-
-    frame_dir = os.path.join(
-        ROOT,
-        f"scene{number}_frames"
+    subprocess.run(
+        [
+            sys.executable,
+            script
+        ],
+        cwd=ROOT,
+        check=True
     )
 
-    audio_file = os.path.join(
-        ROOT,
-        f"scene{number}_audio.wav"
-    )
+    print(f"Scene {number} rendered successfully.")
 
-    if not os.path.isdir(frame_dir):
-        raise RuntimeError(
-            f"Scene {number} did not create its frame directory."
+
+def check_scene_files():
+    for number, script, frame_dir, audio_file in SCENES:
+        script_path = os.path.join(
+            ROOT,
+            script
         )
 
-    if not os.path.isfile(audio_file):
-        raise RuntimeError(
-            f"Scene {number} did not create its audio file."
+        frames_path = os.path.join(
+            ROOT,
+            frame_dir
         )
 
-    return frame_dir, audio_file
+        audio_path = os.path.join(
+            ROOT,
+            audio_file
+        )
 
+        if not os.path.isfile(script_path):
+            raise FileNotFoundError(
+                f"Scene {number} script not found: {script}"
+            )
 
-def check_ffmpeg():
-    return shutil.which("ffmpeg") is not None
+        if not os.path.isdir(frames_path):
+            raise FileNotFoundError(
+                f"Scene {number} frames not found: {frame_dir}"
+            )
+
+        if not os.path.isfile(audio_path):
+            raise FileNotFoundError(
+                f"Scene {number} audio not found: {audio_file}"
+            )
 
 
 def create_scene_video(
-    scene_number,
+    number,
     frame_dir,
     audio_file
 ):
-    output = os.path.join(
-        TEMP_DIR,
-        f"scene{scene_number}.mp4"
-    )
-
     os.makedirs(
         TEMP_DIR,
         exist_ok=True
     )
 
-    pattern = os.path.join(
+    output = os.path.join(
+        TEMP_DIR,
+        f"scene{number}.mp4"
+    )
+
+    frames = os.path.join(
+        ROOT,
         frame_dir,
         "frame_%04d.png"
+    )
+
+    audio = os.path.join(
+        ROOT,
+        audio_file
     )
 
     command = [
@@ -90,9 +106,9 @@ def create_scene_video(
         "-framerate",
         "30",
         "-i",
-        pattern,
+        frames,
         "-i",
-        audio_file,
+        audio,
         "-c:v",
         "libx264",
         "-preset",
@@ -117,7 +133,7 @@ def create_scene_video(
     return output
 
 
-def concatenate_videos(video_files):
+def concatenate_videos(videos):
     concat_file = os.path.join(
         TEMP_DIR,
         "concat.txt"
@@ -128,11 +144,12 @@ def concatenate_videos(video_files):
         "w",
         encoding="utf-8"
     ) as file:
-        for video in video_files:
+        for video in videos:
             path = os.path.abspath(video)
+            path = path.replace("\\", "/")
 
             file.write(
-                f"file '{path.replace(chr(92), '/')}'\n"
+                f"file '{path}'\n"
             )
 
     command = [
@@ -158,8 +175,7 @@ def concatenate_videos(video_files):
 def cleanup():
     if os.path.isdir(TEMP_DIR):
         shutil.rmtree(
-            TEMP_DIR,
-            ignore_errors=True
+            TEMP_DIR
         )
 
 
@@ -167,48 +183,28 @@ def main():
     print("StickMan Tree Video")
     print()
 
-    if not check_ffmpeg():
-        print(
-            "FFmpeg was not found."
-        )
-        print(
-            "The six scenes can still be rendered,"
-        )
-        print(
-            "but an MP4 cannot be assembled until FFmpeg is installed."
-        )
-        print()
-
-    scene_files = []
-
-    for number, (module, _, _) in enumerate(
-        SCENES,
-        start=1
-    ):
-        frame_dir, audio_file = run_scene(
-            module,
-            number
+    if shutil.which("ffmpeg") is None:
+        raise RuntimeError(
+            "FFmpeg is required but was not found."
         )
 
-        scene_files.append(
-            (
-                number,
-                frame_dir,
-                audio_file
-            )
+    for number, script, _, _ in SCENES:
+        run_scene(
+            number,
+            script
         )
 
-    if not check_ffmpeg():
-        print()
-        print("All 6 scenes rendered successfully.")
-        return
+    print()
+    print("Checking rendered scenes...")
+
+    check_scene_files()
 
     print()
     print("Encoding scenes...")
 
     videos = []
 
-    for number, frame_dir, audio_file in scene_files:
+    for number, _, frame_dir, audio_file in SCENES:
         video = create_scene_video(
             number,
             frame_dir,
@@ -218,14 +214,16 @@ def main():
         videos.append(video)
 
     print()
-    print("Joining scenes...")
+    print("Joining all scenes...")
 
-    concatenate_videos(videos)
+    concatenate_videos(
+        videos
+    )
 
     cleanup()
 
     print()
-    print("Video complete.")
+    print("StickMan Episode 3 complete.")
     print(f"Output: {OUTPUT}")
 
 
